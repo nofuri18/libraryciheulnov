@@ -1,5 +1,5 @@
 [project]
-name = "library-ciheul"
+name = "simple-django-login-and-register"
 version = "0.4.9"
 description = "An example of Django project with basic user functionality."
 readme = "README.md"

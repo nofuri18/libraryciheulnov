@@ -180,7 +180,7 @@ wheels = [
 ]
 
 [[package]]
-name = "library-ciheul"
+name = "simple-django-login-and-register"
 version = "0.4.9"
 source = { virtual = "." }
 dependencies = [
