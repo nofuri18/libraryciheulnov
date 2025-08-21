@@ -9,7 +9,7 @@
         <div class="mb-3">
             {% if request.user.profile.profile_photo %}
                 <img src="{% static request.user.profile.profile_photo %}" 
-                    alt="Profil {{ request.user.username }}" style="width:300px;">
+                    alt="Profil {{ request.user.username }}" class="img-thumbnail img-fluid clickable-image" style="width:300px;">
             {% else %}
                 <img src="{% static 'images/Default_pfp.jpg' %}" 
                     alt="Profil Default" style="width:300px;">
@@ -59,4 +59,22 @@
         <p>Kamu belum login</p>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block script %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/basiclightbox@5/dist/basicLightbox.min.css">
+<script src="https://cdn.jsdelivr.net/npm/basiclightbox@5/dist/basicLightbox.min.js"></script>
+<script> 
+document.addEventListener("DOMContentLoaded", function() {
+        const images = document.querySelectorAll(".clickable-image");
+        images.forEach(img => {
+            img.addEventListener("click", () => {
+                const instance = basicLightbox.create(`
+                    <img src="${img.src}" style="width:90vw; height:auto;">
+                `)
+                instance.show()
+            });
+        });
+    });
+</script>
 {% endblock %}

@@ -21,11 +21,12 @@
             <!-- Gambar halaman pertama -->
             {% if page_1_url %}
             <div class="text-center mb-3">
-                <img src="{{ page_1_url }}" alt="Halaman 1" class="img-thumbnail img-fluid" style="max-width: 300px;">
+                <img src="{{ page_1_url }}" alt="Halaman 1" class="img-thumbnail img-fluid clickable-image" style="max-width: 300px;">
             </div>
             {% else %}
             <p class="text-center">Cover tidak tersedia</p>
             {% endif %}
+
         <div class="card-body">
             <h4 class="card-title">{{ book.judul }}</h4>
             <h6 class="card-subtitle mb-2 text-muted">Penulis: {{ book.penulis }}</h6>
@@ -145,6 +146,8 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- bootstrap.bundle sudah include Popper untuk 4.6.x -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/basiclightbox@5/dist/basicLightbox.min.css">
+<script src="https://cdn.jsdelivr.net/npm/basiclightbox@5/dist/basicLightbox.min.js"></script>
 
 <script>
 // ambil cookie CSRF (safe untuk digunakan di browser)
@@ -353,6 +356,20 @@ $(document).ready(function() {
 
     $('#btnRefresh').on('click', function() {
         location.reload(); // reload seluruh halaman
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const images = document.querySelectorAll(".clickable-image");
+        images.forEach(img => {
+            img.addEventListener("click", () => {
+                const instance = basicLightbox.create(`
+                    <div style="width:60vw; max-width:600px; aspect-ratio:3/4;">
+                        <img src="${img.src}" style="width:100%; height:100%; object-fit:cover;">
+                    </div>
+                `);
+                instance.show();
+            });
+        });
     });
 </script>
 {% endblock %}

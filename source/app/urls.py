@@ -2,11 +2,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
-from main.views import ChangeLanguageView, IndexPageView
+from main.views import ChangeLanguageView, IndexPageView, HomeRedirectView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", IndexPageView.as_view(), name="index"),
+    path("", HomeRedirectView.as_view(), name="index"),
     path("i18n/", include("django.conf.urls.i18n")),
     path("language/", ChangeLanguageView.as_view(), name="change_language"),
     path("accounts/", include("accounts.urls")),
