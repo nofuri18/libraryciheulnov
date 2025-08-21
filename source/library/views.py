@@ -132,14 +132,11 @@ def book_masterdata_ajax(request):
     favorited_only = request.GET.get('favorited') == '1'
     
     if favorited_only:
-        # Hanya buku yang difavorit user saat ini
         books = Book.objects.filter(favorited_by__user=request.user)
     else:
-        # Semua buku
         books = Book.objects.all()
 
     books_data = []
-
     for book in books:
         # Ambil 15 kata pertama dari deskripsi
         desc_words = book.deskripsi.split()[:15]
@@ -147,20 +144,44 @@ def book_masterdata_ajax(request):
         if len(book.deskripsi.split()) > 15:
             short_desc += ' ...'
 
-        # Status favorit: 1 jika user sudah favorit, 0 jika belum
-        is_favorited = 1 if Favorite.objects.filter(user=request.user, book=book).exists() else 0
+        # Status favorit
+        is_favorited = Favorite.objects.filter(user=request.user, book=book).exists()
+
+        # Gambar halaman pertama (page_1.png)
+        images_dir = os.path.join(settings.MEDIA_ROOT, 'book', 'pages', str(book.id))
+        page_1_path = os.path.join(images_dir, 'page_1.png')
+        if os.path.exists(page_1_path):
+            image_url = os.path.join(settings.MEDIA_URL, 'book', 'pages', str(book.id), 'page_1.png')
+        else:
+            image_url = settings.STATIC_URL + "images/book_default.png"
+
+        # Tombol favorit: kelas berubah tergantung status
+        fav_class = "btn-primary" if is_favorited else "btn-outline-primary"
 
         books_data.append({
+            'image_url': image_url,
             'judul': book.judul,
             'deskripsi': short_desc,
             'genre': book.genre,
-            'favorited': is_favorited,  # ini field boolean 0/1 eksplisit
+            'favorited': int(is_favorited),
             'action': f'''
-                <a href="{reverse('detail_book_masterdata', args=[book.id])}" class="btn btn-sm btn-info">Detail</a>
+                <div class="d-flex justify-content-start">
+                    <a href="{reverse('detail_book_masterdata', args=[book.id])}" 
+                    class="btn btn-sm btn-info mr-2">
+                        Detail
+                    </a>
+                    <button type="button" 
+                            class="btn {fav_class} btn-sm btn-favorite" 
+                            data-book-id="{book.id}">
+                        <i class="fas fa-bookmark"></i>
+                    </button>
+                </div>
             '''
+
         })
 
     return JsonResponse({'data': books_data})
+
 
 
 class BookMasterUpdate(APIView):
@@ -318,8 +339,6 @@ def delete_book_masterdata(request, pk):
         return JsonResponse({'success': False, 'message': "Metode tidak diperbolehkan."})
     
 def detail_book_masterdata(request, pk):
-    import os
-    from django.conf import settings
 
     # Ambil buku berdasarkan primary key
     book = get_object_or_404(Book, pk=pk)
