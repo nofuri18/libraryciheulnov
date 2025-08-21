@@ -153,7 +153,7 @@ def book_masterdata_ajax(request):
         if os.path.exists(page_1_path):
             image_url = os.path.join(settings.MEDIA_URL, 'book', 'pages', str(book.id), 'page_1.png')
         else:
-            image_url = settings.STATIC_URL + "images/book_default.png"
+            image_url = "-"
 
         # Tombol favorit: kelas berubah tergantung status
         fav_class = "btn-primary" if is_favorited else "btn-outline-primary"
