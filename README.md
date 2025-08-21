@@ -1,107 +1,34 @@
-# Simple Django Login and Registration
+# Library CIHEUL – Django Project
 
-[![CI pipeline](https://github.com/egorsmkv/simple-django-login-and-register/actions/workflows/ci.yml/badge.svg)](https://github.com/egorsmkv/simple-django-login-and-register/actions/workflows/ci.yml)
-
-An example of Django project with basic user functionality.
+Perkenalkan saya Novrylianto Zundi Ramadhan selaku calon kandidat dari seleksi Ciheul Technologies.  
+Project ini menggunakan Django 4.2.23 dan kompatibel dengan PostgreSQL 12.
 
 ## Screenshots
+| Detail Buku All Tomorrow | Detail Buku Laskar Pelangi | Edit Buku | Edit Profil | Hapus Buku modal | Keyword NLTK modal | Login | Modal Preview Buku | Profil | Registrasi akun | Set Unset Favorit Buku | Tampilan Filter Favorit Buku | Tampilan Semua Buku | Tampilan awal belum login regristrasi | Upload Buku |
+|----------|----------|----------|----------|----------|----------|----------|----------|----------|----------|----------|----------|----------|----------|----------|
+| <img src="./Screenshots/Detail Buku All Tomorrow.png" width="200"> | <img src="./Screenshots/Detail Buku Laskar Pelangi.png" width="200"> | <img src="./Screenshots/Edit Buku.png" width="200"> | <img src="./Screenshots/Edit Profil.png" width="200"> | <img src="./Screenshots/Hapus Buku modal.png" width="200"> | <img src="./Screenshots/Keyword NLTK modal.png" width="200"> | <img src="./Screenshots/Login.png" width="200"> | <img src="./Screenshots/Modal Preview Buku.png" width="200"> | <img src="./Screenshots/Profil.png" width="200"> | <img src="./Screenshots/Registrasi akun.png" width="200"> | <img src="./Screenshots/Set Unset Favorit Buku.png" width="200"> | <img src="./Screenshots/Tampilan Filter Favorit Buku.png" width="200"> | <img src="./Screenshots/Tampilan Semua Buku.png" width="200"> | <img src="./Screenshots/Tampilan awal belum login regristrasi.png" width="200"> | <img src="./Screenshots/Upload Buku.png" width="200"> |
 
-| Log In | Create an account | Authorized page |
-| -------|--------------|-----------------|
-| <img src="./screenshots/login.png" width="200"> | <img src="./screenshots/create_an_account.png" width="200"> | <img src="./screenshots/authorized_page.png" width="200"> |
+## Petunjuk Instalasi
 
-| Password reset | Set new password | Password change |
-| ---------------|------------------|-----------------|
-| <img src="./screenshots/password_reset.png" width="200"> | <img src="./screenshots/set_new_password.png" width="200"> | <img src="./screenshots/password_change.png" width="200"> |
+```cmd
+:: 1. Buat dan aktifkan virtual environment
+python -m venv venv_tesprogram
+venv_tesprogram\Scripts\activate.bat
 
-## Functionality
+:: 2. Clone repository
+git clone https://github.com/nofuri18/libraryciheulnov.git
+cd library-ciheul
 
-- Log in
-    - via username & password
-    - via email & password
-    - via email or username & password
-    - with a remember me checkbox (optional)
-- Create an account
-- Log out
-- Profile activation via email
-- Reset password
-- Remind a username
-- Resend an activation code
-- Change password
-- Change email
-- Change profile
-- Multilingual: English, French, Simplified Chinese and Spanish
+:: 3. Install dependencies
+pip install -r requirements.txt
 
-If you need dynamic URLs with the language code, check out https://github.com/egorsmkv/simple-django-login-and-register-dynamic-lang
+:: 4. Konfigurasi database
+:: Ubah file :
+source/app/conf/development/settings.py 
+:: Saya menggunakan PostgreSQL 12
 
-## Installing
-
-### Clone the project
-
-```bash
-git clone https://github.com/egorsmkv/simple-django-login-and-register
-cd simple-django-login-and-register
-```
-
-### Activate virtualenv
-
-#### Create a virtualenv using `uv`
-
-```bash
-uv venv --python 3.13
-
-source .venv/bin/activate
-```
-
-#### Install dependencies
-
-```bash
-# uv sync --upgrade --extra dev
-
-uv sync --upgrade
-
-# Or using requirements files:
-
-uv pip install -r requirements.txt
-uv pip install -r requirements-dev.txt # in development mode
-```
-
-### Configure the settings (connection to the database, connection to an SMTP server, and other options)
-
-1. Edit `source/app/conf/development/settings.py` if you want to develop the project.
-
-2. Edit `source/app/conf/production/settings.py` if you want to run the project in production.
-
-### Apply migrations
-
-```bash
+:: 5. Lakukan migrations
 python source/manage.py migrate
-```
 
-### Running
-
-#### On development server
-
-Start the local web server:
-
-```bash
+:: 6. Jalankan server
 python source/manage.py runserver
-```
-
-#### On production server
-
-Collect static files:
-
-```bash
-python source/manage.py collectstatic
-```
-
-### Development
-
-#### Check & format code
-
-This command formats the code:
-
-```bash
-just fmt
-```
