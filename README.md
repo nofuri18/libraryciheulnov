@@ -1,7 +1,7 @@
 # Library CIHEUL – Django Project
 
 Perkenalkan saya Novrylianto Zundi Ramadhan selaku calon kandidat dari seleksi Ciheul Technologies.  
-Project ini menggunakan Django 4.2.23 dan kompatibel dengan PostgreSQL 12.
+Project ini menggunakan Django 4.2.23 dan kompatibel dengan PostgreSQL 12. Khusus fitur login dan registrasi saya terinspirasi dari simple-django-login-and-register milik egorsmkv, namun tetap dikostumisasi sesuai instruksi soal, salah satunya penambahan dan edit foto profil, fitur login-registrasi saya letakkan di struktur app 'accounts' . Sementara itu CRUD Library beserta preview buku dan analisis keyword relevan yang saya kerjakan berada di struktur app 'library'.
 
 ## Screenshots
 | Detail Buku All Tomorrow | Detail Buku Laskar Pelangi | Edit Buku | Edit Profil | Hapus Buku modal | Keyword NLTK modal | Login | Modal Preview Buku | Profil | Registrasi akun | Set Unset Favorit Buku | Tampilan Filter Favorit Buku | Tampilan Semua Buku | Tampilan awal belum login regristrasi | Upload Buku |
@@ -32,3 +32,4 @@ python source/manage.py migrate
 
 :: 6. Jalankan server
 python source/manage.py runserver
+
