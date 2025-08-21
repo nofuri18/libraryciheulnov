@@ -22,10 +22,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 import shutil
 from pprint import pprint
-# Pastikan resource tersedia
-nltk.download('punkt')
-nltk.download('stopwords')
-nltk.download('punkt_tab')
+
 
 
 def profil(request):
@@ -397,6 +394,10 @@ class BookMasterFavorite(APIView):
 
 
 def analyze_keyword_ajax(request, pk):
+    # Pastikan resource tersedia
+    nltk.download('punkt')
+    nltk.download('stopwords')
+    nltk.download('punkt_tab')
     if request.method != 'POST':
         return JsonResponse({"success": False, "message": "Metode POST required."})
     
