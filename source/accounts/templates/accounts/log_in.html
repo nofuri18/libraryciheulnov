@@ -4,29 +4,22 @@
 
 {% block content %}
 
-    <h4>{% translate 'Log in' %}</h4>
+    <h4> Masuk</h4>
 
     <form method="post">
 
         {% csrf_token %}
         {% bootstrap_form form %}
 
-        <button class="btn btn-primary">{% translate 'Log in' %}</button>
+        <button class="btn btn-primary">Masuk</button>
 
     </form>
 
     <hr>
 
-    <ul>
-        <li>
-            <a href="{% url 'accounts:restore_password' %}">{% translate 'Forgot your password?' %}</a>
-        </li>
-        <li>
-            <a href="{% url 'accounts:remind_username' %}">{% translate 'Forgot your username?' %}</a>
-        </li>
-        <li>
-            <a href="{% url 'accounts:resend_activation_code' %}">{% translate 'Resend an activation code' %}</a>
-        </li>
-    </ul>
 
+    
+
+    <h4 class="mb-4">Belum Punya Akun?</h2>
+     <a class="btn btn-success" href="{% url 'accounts:sign_up' %}">Registrasi</a>
 {% endblock content %}

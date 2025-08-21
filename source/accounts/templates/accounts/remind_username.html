@@ -4,14 +4,14 @@
 
 {% block content %}
 
-    <h4>{% translate 'Remind a username' %}</h4>
+    <h4>Remind a username</h4>
 
     <form method="post">
 
         {% csrf_token %}
         {% bootstrap_form form %}
 
-        <button class="btn btn-primary">{% translate 'Next' %}</button>
+        <button class="btn btn-primary">Selanjutnya</button>
 
     </form>
 

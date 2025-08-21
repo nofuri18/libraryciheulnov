@@ -4,14 +4,14 @@
 
 {% block content %}
 
-    <h4>{% translate 'Create an account' %}</h4>
+    <h4> Buat Akun</h4>
 
     <form method="post">
 
         {% csrf_token %}
         {% bootstrap_form form %}
 
-        <button class="btn btn-success">{% translate 'Create' %}</button>
+        <button class="btn btn-success">Simpan</button>
 
     </form>
 

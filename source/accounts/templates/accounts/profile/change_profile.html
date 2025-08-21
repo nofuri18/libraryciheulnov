@@ -1,18 +1,47 @@
 {% extends 'layouts/default/page.html' %}
-
-{% load bootstrap4 i18n %}
+{% load i18n %}
 
 {% block content %}
+<div class="container mt-4">
+    <h4>Edit Profil</h4>
 
-    <h4>{% translate 'Change profile' %}</h4>
+    <div class="content-wrapper">
+    <section class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
 
-    <form method="post">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="box box-danger border-dark p-3">
+                        <div class="form-group row mb-3">
+                            <div class="col-sm-6">
+                                {{ form.first_name.label_tag }}
+                                {{ form.first_name }}
+                            </div>
+                            <div class="col-sm-6">
+                                {{ form.last_name.label_tag }}
+                                {{ form.last_name }}
+                            </div>
+                        </div>
 
-        {% csrf_token %}
-        {% bootstrap_form form %}
+                        <div class="form-group row mb-3">
+                            <div class="col-sm-6">
+                                {{ form.profile_photo.label_tag }}
+                                {{ form.profile_photo }}
+                            </div>
+                        </div>
+                    </div>
 
-        <button class="btn btn-success">{% translate 'Change' %}</button>
+                    <div class="col-md-12 text-right mt-3">
+                        <button type="submit" class="btn btn-success">Simpan</button>
+                    </div>
+                </form>
 
-    </form>
+            </div>
+        </div>
+    </section>
+</div>
 
-{% endblock content %}
+</div>
+{% endblock %}

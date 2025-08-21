@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from django.conf import settings
+from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Q
 from django.forms import (
@@ -223,9 +224,23 @@ class RestorePasswordViaEmailOrUsernameForm(EmailOrUsernameForm):
     pass
 
 
-class ChangeProfileForm(Form):
-    first_name = CharField(label=_("First name"), max_length=30, required=False)
-    last_name = CharField(label=_("Last name"), max_length=150, required=False)
+class ChangeProfileForm(forms.Form):
+    first_name = forms.CharField(
+        required=False, 
+        label="Nama Depan",
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    last_name = forms.CharField(
+        required=False, 
+        label="Nama Belakang",
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    profile_photo = forms.FileField(
+        required=False, 
+        label="Foto Profil",
+        widget=forms.ClearableFileInput(attrs={'class': 'form-control'})
+    )
+
 
 
 class ChangeEmailForm(Form):

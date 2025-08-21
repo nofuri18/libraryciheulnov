@@ -23,11 +23,13 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",
+    'rest_framework',
     # Vendor apps
     "bootstrap4",
     # Application apps
     "main",
     "accounts",
+    "library",
 ]
 
 MIDDLEWARE = [
@@ -70,8 +72,12 @@ DEFAULT_FROM_EMAIL = "test@example.com"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",  # set koneksi PostgreSQL
+        "NAME": "tesprogram",       # sama dengan DB_DATABASE
+        "USER": "postgres",      # sama dengan DB_USERNAME
+        "PASSWORD": "postgres",  # sama dengan DB_PASSWORD
+        "HOST": "localhost",     # sama dengan DB_HOST
+        "PORT": "5432",          # sama dengan DB_PORT
     }
 }
 
@@ -90,7 +96,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-ENABLE_USER_ACTIVATION = True
+ENABLE_USER_ACTIVATION = False
 DISABLE_USERNAME = False
 LOGIN_VIA_EMAIL = True
 LOGIN_VIA_EMAIL_OR_USERNAME = False
@@ -134,6 +140,7 @@ MEDIA_URL = "/media/"
 
 STATICFILES_DIRS = [
     CONTENT_DIR / "assets",
+    
 ]
 
 LOCALE_PATHS = [CONTENT_DIR / "locale"]

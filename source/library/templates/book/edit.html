@@ -1,0 +1,134 @@
+{% extends 'layouts/default/page.html' %}
+
+{% load i18n %}
+
+{% block content %}
+<div class="content-wrapper">
+    <!-- Header -->
+    <div class="content-header mb-3">
+        <h1>EDIT BUKU</h1>
+    </div>
+    <section class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="box box-danger border-dark">
+
+                    <form id="editForm">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <div class="col-sm-6">
+                                <label>Judul</label>
+                                <input type="text" class="form-control" name="judul" value="{{ book.judul }}">
+                            </div>
+                        <div class="col-sm-6">
+                            <label for="deskripsi">Deskripsi</label>
+                            <textarea class="form-control" name="deskripsi" id="deskripsi" rows="4">{{ book.deskripsi }}</textarea>
+                        </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-6">
+                                <label>Tahun Terbit</label>
+                                <input type="number" class="form-control" name="tahun_terbit" min="0" step="1" value="{{ book.tahun_terbit }}" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <label>Penulis</label>
+                                <input type="text" class="form-control" name="penulis" value="{{ book.penulis }}">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-6">
+                                <label>Jumlah Halaman</label>
+                                <input type="number" class="form-control" name="jumlah_halaman" min="0" step="1" value="{{ book.jumlah_halaman }}">
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="genre">Genre Buku</label> 
+                                <select id="genre" name="genre" class="form-control" required>
+                                    <option value="" disabled>-- Pilih Genre --</option>
+                                    {% for val, label in GENRE_CHOICES %}
+                                        <option value="{{ val }}" {% if book.genre == val %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-6">
+                                <label>File PDF</label>
+                                {% if book.file_pdf %}
+                                    <p>
+                                        File lama: 
+                                        <a href="{{ book.file_pdf.url }}" target="_blank">Lihat PDF</a>
+                                    </p>
+                                {% endif %}
+                                <input type="file" class="form-control" name="file_pdf">
+                            </div>
+                        </div>
+                        <div class="col-md-12 text-right mt-3">
+                            <a class="btn btn-warning" href="{% url 'detail_book_masterdata' book.id %}">Back</a>
+                            <button type="button" class="btn btn-primary" onclick="submitEdit()">Edit</button>
+                        </div>
+                    </form>
+
+                    <div class="box-footer"></div>
+                    <!-- Loading overlay -->
+                    <div id="loadingOverlay" 
+                         style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
+                                background:rgba(255,255,255,0.7); z-index:9999; 
+                                justify-content:center; align-items:center; font-size:20px; font-weight:bold;">
+                        <div class="spinner-border text-primary" role="status">
+                          <span class="sr-only">Loading...</span>
+                        </div>
+                        <span class="ml-2">Sedang menyimpan data...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+function showLoading() {
+    document.getElementById("loadingOverlay").style.display = "flex";
+}
+
+function hideLoading() {
+    document.getElementById("loadingOverlay").style.display = "none";
+}
+
+function submitEdit() {
+    const form = document.getElementById("editForm");
+    const formData = new FormData(form);
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    formData.append('id', {{ book.id }});  // tambahkan ID di POST body
+
+    showLoading(); // tampilkan overlay
+
+    fetch("{% url 'update_book_masterdata' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrftoken
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoading(); // sembunyikan overlay
+
+        if (data.data) {
+            alert("Data berhasil diperbarui!");
+            window.location.href = "{% url 'book_masterdata' %}";
+        } else {
+            alert("Gagal memperbarui: " + data.message);
+        }
+    })
+    .catch(err => {
+        hideLoading(); // pastikan tetap hilang walau error
+        console.error("Fetch error:", err);
+        alert("Terjadi error saat memperbarui data.");
+    });
+}
+</script>
+{% endblock %}

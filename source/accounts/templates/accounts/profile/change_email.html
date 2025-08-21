@@ -4,14 +4,14 @@
 
 {% block content %}
 
-    <h4>{% translate 'Change email' %}</h4>
+    <h4> Ubah Email </h4>
 
     <form method="post">
 
         {% csrf_token %}
         {% bootstrap_form form %}
 
-        <button class="btn btn-success">{% translate 'Change' %}</button>
+        <button class="btn btn-success"> Simpan</button>
 
     </form>
 

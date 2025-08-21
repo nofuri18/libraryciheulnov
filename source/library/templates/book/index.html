@@ -1,0 +1,81 @@
+{% extends 'layouts/default/page.html' %}
+
+{% load i18n %}
+{% block content %}
+
+{% if request.user.is_authenticated %}
+
+      Username Anda Adalah <b>{{ request.user.username }}</b>.
+      <div class="container mt-4">
+          <h2>Daftar Buku</h2>
+
+          <!-- Filter -->
+          <div class="mb-3">
+              <button class="btn btn-outline-primary" id="filterAll">Semua Buku</button>
+              <button class="btn btn-outline-success" id="filterFavorite">Favorit Saya</button>
+          </div>
+
+          <table id="booksTable" class="table table-striped table-bordered">
+              <thead>
+                  <tr>
+                      <th>Judul</th>
+                      <th>Deskripsi</th>
+                      <th>Genre</th>
+                      <th>Action</th>
+                  </tr>
+              </thead>
+          </table>
+      </div>
+
+    {% else %}
+
+      Kamu belum login
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:log_in' %}"> Log in </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:sign_up' %}"> Registrasi </a>
+                </li>
+
+{% endif %}
+
+
+
+{% endblock %}
+
+{% block script %}
+<!-- DataTables & jQuery -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+
+<script>
+$(document).ready(function() {
+    let table = $('#booksTable').DataTable({
+        "ajax": "{% url 'book_masterdata_ajax' %}",
+        "columns": [
+            { "data": "judul" },
+            { "data": "deskripsi" },
+            { "data": "genre" },
+            { "data": "action", "orderable": false, "searchable": false }
+        ],
+        "pageLength": 5,
+        "lengthChange": false,
+        "pagingType": "full_numbers"
+    });
+
+    // Filter tombol
+    $('#filterAll').on('click', function() {
+        table.ajax.url("{% url 'book_masterdata_ajax' %}").load();
+    });
+
+    $('#filterFavorite').on('click', function() {
+        table.ajax.url("{% url 'book_masterdata_ajax' %}?favorited=1").load();
+    });
+});
+</script>
+{% endblock %}

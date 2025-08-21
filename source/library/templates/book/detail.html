@@ -1,0 +1,358 @@
+{% extends 'layouts/default/page.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Detail Buku</h2>
+    <div class="card">
+    <div class="card-footer text-left">
+        <!-- Tombol Favorit -->
+        <button type="button" class="btn btn-outline-primary" id="btnFavorite">
+            <i class="fas fa-bookmark"></i> Favorit
+        </button>
+
+        <!-- Tombol Refresh -->
+        <button type="button" class="btn btn-outline-success ml-2" id="btnRefresh">
+            <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+    </div>
+
+           <!-- Gambar halaman pertama -->
+            <!-- Gambar halaman pertama -->
+            {% if page_1_url %}
+            <div class="text-center mb-3">
+                <img src="{{ page_1_url }}" alt="Halaman 1" class="img-thumbnail img-fluid" style="max-width: 300px;">
+            </div>
+            {% else %}
+            <p class="text-center">Cover tidak tersedia</p>
+            {% endif %}
+        <div class="card-body">
+            <h4 class="card-title">{{ book.judul }}</h4>
+            <h6 class="card-subtitle mb-2 text-muted">Penulis: {{ book.penulis }}</h6>
+            <p class="card-text"><strong>Deskripsi:</strong> {{ book.deskripsi }}</p>
+            <p class="card-text"><strong>Tahun Terbit:</strong> {{ book.tahun_terbit }}</p>
+            <p class="card-text"><strong>Jumlah Halaman:</strong> {{ book.jumlah_halaman }}</p>
+            <p class="card-text"><strong>Genre:</strong> {{ book.get_genre_display }}</p>
+            <p class="card-text"><strong>Keyword:</strong></p>
+            {% if keywords %}
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th>Keyword</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for kw in keywords %}
+                    <tr>
+                        <td>{{ kw.keyword }}</td>
+                        <td>{{ kw.score }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>-</p>
+            {% endif %}
+
+            <p class="card-text"><strong>File PDF:</strong> {{ book.file_pdf }}</p>
+            
+        </div>
+        
+
+        <div class="card-footer text-right">
+            <a href="{% url 'book_masterdata' %}" class="btn btn-secondary">Back</a>
+            <button type="button" class="btn btn-secondary" id="btnReadBook" data-toggle="modal" data-target="#readBookModal">
+                Baca Buku
+            </button>
+            <a href="#" class="btn btn-secondary" id="btnAnalyze">Analis</a>
+            <a href="{% url 'edit_book_masterdata' book.id %}" class="btn btn-warning">Edit</a>
+            <!-- trigger modal (Bootstrap 4) -->
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">Hapus</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Konfirmasi Hapus (Bootstrap 4) -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Apakah Anda yakin ingin menghapus buku ini?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+        <!-- tombol konfirmasi (TIDAK di dalam form) -->
+        <button type="button" class="btn btn-danger" id="confirmDelete">Hapus</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal untuk membaca buku -->
+<div class="modal fade" id="readBookModal" tabindex="-1" role="dialog" aria-labelledby="readBookModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header d-flex justify-content-between">
+        <button type="button" class="btn btn-light" id="backButton">&lt; Back</button>
+        <div>
+          <span id="pageInfo">1 / 1</span>
+          <button type="button" class="btn btn-sm btn-secondary" id="prevPage">Previous</button>
+          <button type="button" class="btn btn-sm btn-secondary" id="nextPage">Next</button>
+        </div>
+      </div>
+      <div class="modal-body text-center">
+        <img id="bookPage" src="" class="img-fluid" alt="Halaman Buku">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Keyword Analysis -->
+<div class="modal fade" id="keywordModal" tabindex="-1" role="dialog" aria-labelledby="keywordModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="keywordModalLabel">Keyword Analysis</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ul id="keywordList">
+          <!-- Keyword akan di-inject via JS -->
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<!--
+  Hanya sertakan skrip ini jika base template TIDAK sudah memuatnya.
+  Jika base sudah memuat jQuery/Popper/Bootstrap, hapus blok <script> berikut.
+-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- bootstrap.bundle sudah include Popper untuk 4.6.x -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+// ambil cookie CSRF (safe untuk digunakan di browser)
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const c = cookies[i].trim();
+            if (c.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(c.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+$(document).ready(function() {
+    // Gunakan reverse URL Django agar path pasti benar
+    const deleteUrl = "{% url 'delete_book_masterdata' book.id %}";
+
+    $('#confirmDelete').on('click', function(e) {
+        e.preventDefault();
+        const $btn = $(this);
+        $btn.prop('disabled', true).text('Menghapus...');
+
+        fetch(deleteUrl, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Accept': 'application/json'
+            }
+        })
+        .then(res => {
+            // cek status HTTP dulu
+            if (!res.ok) throw new Error('Network response was not ok: ' + res.status);
+            return res.json();
+        })
+        .then(data => {
+            if (data && data.success) {
+                // tutup modal
+                $('#deleteModal').modal('hide');
+                setTimeout(function() {
+                    alert(data.message || 'Buku berhasil dihapus');
+                    window.location.href = "{% url 'book_masterdata' %}";
+                }, 200);
+            } else {
+                alert(data.message || 'Gagal menghapus');
+                $btn.prop('disabled', false).text('Hapus');
+            }
+        })
+        .catch(err => {
+            console.error('Delete error:', err);
+            alert('Terjadi error saat menghapus. Cek console/network.');
+            $btn.prop('disabled', false).text('Hapus');
+        });
+    });
+
+    const bookId = "{{ book.id }}";
+    const btnFavorite = $('#btnFavorite');
+
+    // Cek status awal favorit (opsional)
+    let favorited = {{ favorited|default:"false"|lower }}; // bisa dikirim dari view
+
+    function updateButton() {
+        if(favorited){
+            btnFavorite.removeClass('btn-outline-primary').addClass('btn-primary');
+            btnFavorite.html('<i class="fas fa-bookmark"></i> Favorit');
+        } else {
+            btnFavorite.removeClass('btn-primary').addClass('btn-outline-primary');
+            btnFavorite.html('<i class="fas fa-bookmark"></i> Favorit');
+        }
+    }
+
+    updateButton();
+
+    btnFavorite.on('click', function(){
+        fetch(`/library/book/favorite/${bookId}/`, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Accept': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success){
+                favorited = data.favorited;
+                updateButton();
+                alert(data.message);
+            } else {
+                alert('Gagal update favorit');
+            }
+        })
+        .catch(err => console.error(err));
+    });
+
+    // fungsi ambil CSRF token dari cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const c = cookies[i].trim();
+                if (c.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(c.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    let currentPage = 1;
+    let totalPage = 1;
+
+    const bookPageImg = $('#bookPage');
+    const pageInfo = $('#pageInfo');
+    const prevBtn = $('#prevPage');
+    const nextBtn = $('#nextPage');
+
+    $('#btnReadBook').on('click', function() {
+        // load jumlah halaman via AJAX
+        $.getJSON(`/library/book/detail/preview/${bookId}/`, function(data) {
+            if(data.success){
+                totalPage = data.total_pages;
+                currentPage = 1;
+                loadPage(currentPage);
+            } else {
+                alert(data.message);
+            }
+        });
+    });
+
+    function loadPage(pageNumber) {
+        const imgUrl = `/media/book/pages/${bookId}/page_${pageNumber}.png`;
+        bookPageImg.attr('src', imgUrl);
+        pageInfo.text(pageNumber + " / " + totalPage);
+
+        prevBtn.prop('disabled', pageNumber === 1);
+        nextBtn.prop('disabled', pageNumber === totalPage);
+    }
+
+    prevBtn.on('click', function() {
+        if(currentPage > 1) {
+            currentPage--;
+            loadPage(currentPage);
+        }
+    });
+
+    nextBtn.on('click', function() {
+        if(currentPage < totalPage) {
+            currentPage++;
+            loadPage(currentPage);
+        }
+    });
+
+    $('#backButton').on('click', function() {
+        $('#readBookModal').modal('hide');
+    });
+
+    $('#btnAnalyze').on('click', function(e){
+        e.preventDefault();
+        const analyzeUrl = `/library/book/detail/analyzekey/${bookId}/`;
+
+        $(this).prop('disabled', true).text('Menganalisis...');
+
+        fetch(analyzeUrl, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Accept': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success){
+                const keywordList = $('#keywordList');
+                keywordList.empty();
+                data.keywords.forEach(k => {
+                    keywordList.append(`<li>${k.keyword} (score: ${k.score})</li>`);
+                });
+                $('#keywordModal').modal('show'); // tampilkan modal
+            } else {
+                alert('Gagal menganalisis: ' + data.message);
+            }
+            $('#btnAnalyze').prop('disabled', false).text('Analis');
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Terjadi error saat analisis. Cek console.');
+            $('#btnAnalyze').prop('disabled', false).text('Analis');
+        });
+    });
+
+    // Refresh tiap 15 detik (15000 ms)
+    setInterval(refreshKeywords, 15000);
+
+    // Panggil pertama kali agar langsung ada data
+    refreshKeywords();
+    });
+
+    $('#btnRefresh').on('click', function() {
+        location.reload(); // reload seluruh halaman
+    });
+</script>
+{% endblock %}

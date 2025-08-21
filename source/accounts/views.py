@@ -1,6 +1,8 @@
+import os
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME, authenticate, login
+from .models import Profile
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import AnonymousUser, User
 from django.contrib.auth.tokens import default_token_generator
@@ -242,32 +244,70 @@ class RestorePasswordView(GuestOnlyView, FormView):
         return redirect("accounts:restore_password_done")
 
 
-class ChangeProfileView(FormView, LoginRequiredMixin):
+# class ChangeProfileView(FormView, LoginRequiredMixin):
+#     template_name = "accounts/profile/change_profile.html"
+#     form_class = ChangeProfileForm
+
+#     def get_initial(self):
+#         initial = super().get_initial()
+#         user = self.request.user
+#         if isinstance(user, AnonymousUser):
+#             return initial
+#         initial["first_name"] = user.first_name
+#         initial["last_name"] = user.last_name
+#         return initial
+
+#     def form_valid(self, form):
+#         initial = super().get_initial()
+#         user = self.request.user
+#         if isinstance(user, AnonymousUser):
+#             return initial
+#         user.first_name = form.cleaned_data["first_name"]
+#         user.last_name = form.cleaned_data["last_name"]
+#         user.save()
+
+#         messages.success(self.request, _("Profile data has been successfully updated."))
+
+#         return redirect("accounts:change_profile")
+
+
+
+class ChangeProfileView(FormView):
     template_name = "accounts/profile/change_profile.html"
     form_class = ChangeProfileForm
 
-    def get_initial(self):
-        initial = super().get_initial()
-        user = self.request.user
-        if isinstance(user, AnonymousUser):
-            return initial
-        initial["first_name"] = user.first_name
-        initial["last_name"] = user.last_name
-        return initial
-
     def form_valid(self, form):
-        initial = super().get_initial()
         user = self.request.user
-        if isinstance(user, AnonymousUser):
-            return initial
         user.first_name = form.cleaned_data["first_name"]
         user.last_name = form.cleaned_data["last_name"]
         user.save()
 
-        messages.success(self.request, _("Profile data has been successfully updated."))
+        # simpan foto profil manual ke folder assets/images/
+        photo = form.cleaned_data.get("profile_photo")
+        if photo:
+            profile, created = Profile.objects.get_or_create(user=user)
 
+            # buat nama file berdasarkan username
+            filename = f"profile_{user.username}.png"
+            save_path = os.path.join(
+                settings.BASE_DIR, "content", "assets", "images", filename
+            )
+
+            # hapus file lama jika ada
+            if os.path.exists(save_path):
+                os.remove(save_path)
+
+            # tulis file baru
+            with open(save_path, "wb+") as dest:
+                for chunk in photo.chunks():
+                    dest.write(chunk)
+
+            # simpan path relatif di DB
+            profile.profile_photo = f"images/{filename}"
+            profile.save()
+
+        messages.success(self.request, "Profile berhasil diperbarui.")
         return redirect("accounts:change_profile")
-
 
 class ChangeEmailView(FormView, LoginRequiredMixin):
     template_name = "accounts/profile/change_email.html"
