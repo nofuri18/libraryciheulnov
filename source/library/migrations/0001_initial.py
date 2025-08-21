@@ -43,19 +43,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='BookPage',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('page_number', models.PositiveIntegerField()),
-                ('image_path', models.TextField()),
-                ('book', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='pages', to='library.book')),
-            ],
-            options={
-                'ordering': ['page_number'],
-                'unique_together': {('book', 'page_number')},
-            },
-        ),
-        migrations.CreateModel(
             name='BookKeyword',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),

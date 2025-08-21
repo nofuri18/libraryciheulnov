@@ -46,20 +46,6 @@ class Favorite(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.book.judul}"
 
-# =========================
-# Tabel BookPages
-# =========================
-class BookPage(models.Model):
-    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='pages')
-    page_number = models.PositiveIntegerField()
-    image_path = models.TextField()  # path ke halaman gambar
-
-    class Meta:
-        unique_together = ('book', 'page_number')
-        ordering = ['page_number']
-
-    def __str__(self):
-        return f"{self.book.judul} - Page {self.page_number}"
 
 # =========================
 # Tabel BookKeywords
