@@ -1,12 +1,12 @@
-Django==4.2.23
+Django==5.2.5
 django-bootstrap4==25.2
-djangorestframework==3.14.0
+djangorestframework==3.16.1
 nltk==3.9.1
 joblib==1.5.1
 pillow==11.3.0
 psycopg2-binary==2.9.10
-PyMuPDF==1.24.0
-PyMuPDFb==1.24.0
+PyMuPDF==1.26.3
+PyMuPDFb==1.24.10
 regex==2025.7.34
 ruff>=0.1
 pyrefly>=0.1
